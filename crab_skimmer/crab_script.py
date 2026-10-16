@@ -14,8 +14,8 @@ from PhysicsTools.NanoAODTools.postprocessing.utils.crabhelper import inputFiles
 class ParamSet:
     outDir: str = '.'
     inputFiles: list[str] = field(default_factory=lambda: inputFiles())
-    cut: str = 'nElectron > 1 && Electron_pt[0] > 4. && Electron_pt[1] > 4. && abs(Electron_eta[0]) < 1.22 && abs(Electron_eta[1]) < 1.22 && abs(Electron_dz[0] - Electron_dz[1]) <= 1. && sqrt(2*Electron_pt[0]*Electron_pt[1]*(cosh(Electron_eta[0]-Electron_eta[1]) - cos(Electron_phi[0]-Electron_phi[1]))) < 5. && sqrt(pow(Electron_eta[0]-Electron_eta[1],2) + pow(acos(cos(Electron_phi[0]-Electron_phi[1])),2)) > 0.03 && Electron_charge[0] + Electron_charge[1] == 0 && (HLT_DoubleMu4_3_Bs || HLT_DoubleMu4_3_Jpsi || HLT_DoubleMu4_3_LowMass || HLT_DoubleMu4_LowMass_Displaced || HLT_Mu0_L1DoubleMu || HLT_Mu4_L1DoubleMu || HLT_DoubleMu3_Trk_Tau3mu || HLT_DoubleMu3_TkMu_DsTau3Mu || HLT_DoubleMu4_MuMuTrk_Displaced || HLT_DoubleMu4_Jpsi_Displaced || HLT_DoubleMu4_Jpsi_NoVertexing || HLT_DoubleMu4_JpsiTrkTrk_Displaced || HLT_DoubleMu4_JpsiTrk_Bc || HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass || HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi1p05)'
-    json: str = 'Eras_CDEFG/L1_11p0_HLT_6p5_Incl_Final.json'
+    cut: str = 'nElectron > 1 && Electron_pt[0] > 4. && Electron_pt[1] > 4. && abs(Electron_eta[0]) < 1.22 && abs(Electron_eta[1]) < 1.22 && abs(Electron_dz[0] - Electron_dz[1]) <= 1.  && sqrt(2*Electron_pt[0]*Electron_pt[1]*(cosh(Electron_eta[0]-Electron_eta[1]) - cos(Electron_phi[0]-Electron_phi[1]))) < 5.  && sqrt(pow(Electron_eta[0]-Electron_eta[1],2) + pow(acos(cos(Electron_phi[0]-Electron_phi[1])),2)) > 0.03 && Electron_charge[0] + Electron_charge[1] == 0'
+    json: str = None
     branchesIn: str = None
     branchesOut: str = None
     label: str = '_skim'

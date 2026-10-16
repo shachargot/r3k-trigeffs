@@ -1,5 +1,5 @@
 import numpy as np
-from ROOT import gStyle, gPad, TLegend, TEfficiency
+from ROOT import gStyle, gPad, TLegend, TEfficiency, TH1D, TLine, TGraphAsymmErrors
 from .PlotBase import PlotBase
 
 class EfficiencyPlot(PlotBase):
@@ -160,3 +160,99 @@ class EfficiencyPlot(PlotBase):
             c.Update()
         
         if save: c.SaveAs(save)
+
+    def plotEfficiencyGraphs(self, g_data, g_mc, g_sf, bins, h1_title=None, h2_title=None,
+                         show=False, save=False, ratio_line=True):
+        """Efficiency plot from pre-computed graphs (e.g. from a fit) instead of pass/total histograms.
+
+        g_data, g_mc : TGraphAsymmErrors of efficiency vs. bin centre (asymmetric y errors allowed)
+        g_sf         : TGraphAsymmErrors of the scale factor (data/MC), drawn in the ratio pad
+        bins         : bin edges (array-like), used for the axis frame
+        """
+        from array import array
+        from ROOT import kBlack, kBlue
+
+        edges = array('d', [float(b) for b in bins])
+        nb = len(edges) - 1
+
+        def style(g, color, marker, title):
+            g.SetTitle(title or '')
+            g.SetLineColor(color)
+            g.SetMarkerColor(color)
+            g.SetMarkerStyle(self.marker_style if isinstance(self.marker_style, int) else marker)
+            g.SetMarkerSize(0.8)
+            g.SetLineWidth(2)
+
+        style(g_data, kBlack, 20, h1_title)
+        style(g_mc, kBlue, 21, h2_title)
+        style(g_sf, kBlack, 20, 'Data / MC')
+
+        # Legend
+        leg = TLegend(0, 0, .5, .5)
+        if self.leg_header:
+            leg.SetHeader(self.leg_header, 'C')
+        leg.AddEntry(g_data, h1_title or 'Data', 'pe')
+        leg.AddEntry(g_mc, h2_title or 'MC', 'pe')
+
+        c, p1, p2 = self.createCanvas(option='ratio', size=self.canvas_size)
+
+        # ---- Top panel
+        p1.cd()
+        frame = TH1D('frame_eff', self.title_string, nb, edges)
+        frame.SetDirectory(0)
+        frame.SetStats(0)
+        frame.SetMinimum(self.yrange[0] if self.yrange else 0.)
+        frame.SetMaximum(self.yrange[1] if self.yrange else 1.1)
+        frame.Draw('AXIS')
+
+        if g_mc.GetN():
+            g_mc.Draw('P SAME')
+        if g_data.GetN():
+            g_data.Draw('P SAME')
+
+        self.format_axes(frame,
+                         option='upper',
+                         xrange=self.xrange,
+                         yrange=self.yrange,
+                         text_size=self.text_size,
+                         title_string=self.title_string,
+                         x_title=self.x_title,
+                         y_title=self.y_title)
+
+        leg.Draw()
+        self.format_legend(leg, pos=self.leg_pos, option='upper', scale=self.leg_scale,
+                           legtext_size=self.legtext_size)
+
+        # ---- Ratio panel
+        gPad.Update()
+        p2.cd()
+        rframe = TH1D('frame_ratio', ';;Data / MC', nb, edges)
+        rframe.SetDirectory(0)
+        rframe.SetStats(0)
+        rframe.SetMinimum(self.rrange[0])
+        rframe.SetMaximum(self.rrange[1])
+        rframe.Draw('AXIS')
+        self.format_axes(rframe, option='lower', xrange=self.xrange, yrange=self.rrange,
+                         text_size=self.text_size)
+
+        line = None
+        if ratio_line:
+            line = TLine(edges[0], 1.0, edges[-1], 1.0)
+            line.SetLineStyle(7)
+            line.Draw()
+        if g_sf.GetN():
+            g_sf.Draw('P SAME')
+
+        gPad.Update()
+        c.cd()
+        gPad.Update()
+        c.Update()
+
+        # keep ROOT objects alive as long as the plot object is
+        self._keep = [frame, rframe, line, leg, g_data, g_mc, g_sf]
+
+        if show:
+            c.Draw()
+        if save:
+            c.SaveAs(save)
+        return c, g_sf

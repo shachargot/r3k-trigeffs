@@ -1,48 +1,107 @@
 inputs:
-  data_dir: eff_hists/10_14_25_low_dr/
-  mc_dir: eff_hists/10_14_25_low_dr/
+  data_dir: eff_hists/10_14_26/
+  mc_dir: eff_hists/10_14_26/
   hist_dir: hists/
 
 output:
-  output_dir: eff_plots_v2/10_14_25_low_dr
+  output_dir: eff_plots/10_14_26/
 
 plots:
+  # L1_11p0_HLT_6p5:
+  #   files:
+  #     data: effs_L1_11p0_HLT_6p5.root
+  #     mc: effs_jpsi_resonant_L1_11p0_HLT_6p5.root
+  #   variables: [pt]
+  #   triggers: 
+  #     data_trigger: L1_11p0_HLT_6p5
+  #   mc_triggers:
+  #       - path: L1_11p0_HLT_6p5 
+  #         weight: 1
+
+  # L1_10p5_HLT_6p5:
+  #    files:
+  #      data: effs_L1_10p5_HLT_6p5.root
+  #      mc: effs_jpsi_resonant_L1_10p5_HLT_6p5.root
+  #    variables: [pt]
+  #    triggers:
+  #      data_trigger: L1_10p5_HLT_6p5
+  #    mc_triggers:
+  #        - path: L1_10p5_HLT_6p5
+  #          weight: 1
+
+
+  # L1_7p0_HLT_5p0:
+  #   files:
+  #     data: effs_L1_7p0_HLT_5p0.root
+  #     mc: effs_jpsi_resonant_L1_7p0_HLT_5p0.root
+  #   variables: [pt]
+  #   triggers:
+  #     data_trigger: L1_7p0_HLT_5p0
+  #   mc_triggers:
+  #       - path: L1_7p0_HLT_5p0
+  #         weight: 1
+  
+  # L1_6p5_HLT_4p5:
+  #    files:
+  #      data: effs_L1_6p5_HLT_4p5.root
+  #      mc: effs_jpsi_resonant_L1_6p5_HLT_4p5.root
+  #    variables: [pt]
+  #    triggers:
+  #      data_trigger: L1_6p5_HLT_4p5
+  #    mc_triggers:
+  #        - path: L1_6p5_HLT_4p5
+  #          weight: 1
+  
+  # L1_6p0_HLT_4p0:
+  #     files:
+  #       data: effs_L1_6p0_HLT_4p0.root
+  #       mc: effs_jpsi_resonant_L1_6p0_HLT_4p0.root
+  #     variables: [pt]
+  #     triggers:
+  #       data_trigger: L1_6p0_HLT_4p0
+  #     mc_triggers:
+  #         - path: L1_6p0_HLT_4p0
+  #           weight: 1
+
+
+
   trigger_OR:
-    files:
-      data: effs_data_trigger_OR.root
-      mc: effs_jpsi_resonant.root
-    variables: [pt]
-    triggers: 
-      data_trigger: trigger_OR
-    mc_triggers:
-      - path: L1_11p0_HLT_6p5 
-        weight: 4.66E-2
-      - path: L1_10p5_HLT_6p5 
-        weight: 3.35E-2
-      - path: L1_10p5_HLT_5p0 
-        weight: 3.04E-3
-      - path: L1_9p0_HLT_6p0 
-        weight: 2.61E-1
-      - path: L1_8p5_HLT_5p5 
-        weight: 9.86E-2
-      - path: L1_8p5_HLT_5p0 
-        weight: 1.99E-2
-      - path: L1_8p0_HLT_5p0 
-        weight: 2.04E-1
-      - path: L1_7p5_HLT_5p0 
-        weight: 4.83E-2
-      - path: L1_7p0_HLT_5p0 
-        weight: 7.86E-2
-      - path: L1_6p5_HLT_4p5 
-        weight: 1.07E-2
-      - path: L1_6p0_HLT_4p0 
-        weight: 7.42E-2
-      - path: L1_5p5_HLT_6p0 
-        weight: 4.42E-3
-      - path: L1_5p5_HLT_4p0 
-        weight: 1.91E-2
-      - path: L1_5p0_HLT_4p0 
-        weight: 1.22E-3
-      - path: L1_4p5_HLT_4p0 
-        weight: 8.85E-4
+   files:
+     data: effs_data_trigger_OR.root
+     mc: effs_jpsi_resonant.root
+   variables: [pt]
+   triggers: 
+     data_trigger: trigger_OR
+   mc_triggers:
+       - path: L1_11p0_HLT_6p5 
+         weight: 0.1284
+       - path: L1_10p5_HLT_6p5
+         weight: 0.1594 
+       - path: L1_9p0_HLT_6p0 
+         weight: 0.0503 
+       - path: L1_8p5_HLT_5p5 
+         weight: 0.0479 
+       - path: L1_8p0_HLT_10p0 
+         weight: 0.0195
+       - path: L1_8p0_HLT_5p0  
+         weight: 0.0773 
+       - path: L1_7p5_HLT_5p0 
+         weight: 0.0667 
+       - path: L1_7p0_HLT_10p0
+         weight: 0.0417
+       - path: L1_7p0_HLT_5p0 
+         weight: 0.1099 
+       - path: L1_6p5_HLT_10p0 
+         weight: 0.0335
+       - path: L1_6p5_HLT_4p5 
+         weight: 0.1149 
+       - path: L1_6p0_HLT_10p0  
+         weight: 0.0172
+       - path: L1_6p0_HLT_4p0  
+         weight: 0.0598
+       - path: L1_5p5_HLT_10p0  
+         weight: 0.0292
+       - path: L1_5p5_HLT_4p0  
+         weight: 0.0442
+
 

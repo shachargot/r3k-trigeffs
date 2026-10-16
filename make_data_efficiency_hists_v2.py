@@ -12,6 +12,8 @@ from pprint import pprint
 import json
 import yaml
 import ROOT
+from binnings import *
+from trigger_utils import *
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection, Object
@@ -19,37 +21,12 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-
-class DotDict(dict):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for key, value in self.items():
-            if isinstance(value, dict):
-                self[key] = DotDict(value)
-
-    def __getattr__(self, key):
-        return self.get(key, False)
-
-    def __setattr__(self, key, value):
-        self[key] = DotDict(value) if isinstance(value, dict) else value
-
-    def __delattr__(self, key):
-        if key in self:
-            del self[key]
-        else:
-            raise AttributeError(f'No attribute named {key}')
-
-    def __deepcopy__(self, memo):
-        return DotDict(copy.deepcopy(dict(self), memo))
-
-    def to_dict(self):
-        return {k: v.to_dict() if isinstance(v, DotDict) else v for k, v in self.items()}
-
-
 def get_input_files(inputs, n_files=None):
     def _process(p):
-        if '*' in str(p):
-            return sorted(p.parent.glob(p.name))
+        p = str(p)
+        if '*' in p:
+            return sorted(Path('/').glob(p.lstrip('/')))  # handles wildcards anywhere in path
+        p = Path(p)
         if p.is_dir():
             return sorted(p.glob('*.root'))
         if p.is_file() and p.suffix == '.root':
@@ -67,6 +44,8 @@ class DataTriggerEfficiencyProducer(Module):
         self.writeHistFile = True
         self.trigger_map = self.params.trigger_map
         self.trigger_map['trigger_OR'] = 0
+        self.trigger = self.trigger_map[self.params.trigger] if self.params.trigger else None
+        self.max_dr = {k: max_dr_for(k, v[0] if v else '') for k, v in trigger_map.items()}
 
 
     def make_th1(self, name, xbins):
@@ -94,11 +73,14 @@ class DataTriggerEfficiencyProducer(Module):
         Module.beginJob(self, histFile, histDirName)
 
         # Hist Binnings
-        self.diel_m_bins = np.linspace(2, 4, 100, dtype=np.double)
-        # self.pt_bins     = np.array([5, 6, 7, 8, 9, 10, 11, 12, 13, 999], dtype=np.double)
-        self.pt_bins     = np.array([5, 8, 11, 999], dtype=np.double)
-        self.dr_bins     = np.array([0, 0.12, 0.2, 0.28, 0.44, 1.], dtype=np.double)
-        self.npv_bins    = np.linspace(0, 100, 100, dtype=np.double)
+        # self.diel_m_bins = np.linspace(2, 4, 50, dtype=np.double)
+        # self.pt_bins     = np.array([5, 7, 8, 9, 10, 12, 999], dtype=np.double)
+        # self.pt_bins     = np.array([4, 6, 12, 999], dtype=np.double)
+        # self.dr_bins     = np.array([0, 0.12, 0.2, 0.28, 0.44, 1.], dtype=np.double)
+        # self.npv_bins    = np.linspace(0, 100, 100, dtype=np.double)
+        self.diel_m_bins = DIEL_M_BINS
+        self.pt_bins = PT_BINS
+        self.npv_bins = NPV_BINS
 
         # 1D Hists
         self.h_npv_dict    = {i : self.make_th1(f'npv_{i}', self.npv_bins) for i in self.trigger_map.keys()}
@@ -110,47 +92,52 @@ class DataTriggerEfficiencyProducer(Module):
 
     def analyze(self, event):
         # Define Physics Objects
-        electrons = Collection(event, 'Electron')
+        electrons = sorted(Collection(event,'Electron'), key=lambda e: e.pt, reverse=True)
+        # electrons = Collection(event, 'Electron')
         trig_L1   = Object(event, 'L1')
         trig_HLT  = Object(event, 'HLT')
         pv        = Object(event, 'PV')
-
 
         # Define Kinematic Variables
         # lead_el_pt    = electrons[0].pt
         sublead_el_pt = electrons[1].pt
         # sublead_eta   = electrons[1].eta
         # sublead_phi   = electrons[1].phi
-        # dr            = electrons[0].DeltaR(electrons[1])
+        dr            = electrons[0].DeltaR(electrons[1])
         # diel_pt       = (electrons[0].p4() + electrons[1].p4()).Pt()
         diel_m        = (electrons[0].p4() + electrons[1].p4()).M()
 
+        trig_bit_dict = {}
+        or_bits = []
+
         # Define Trigger Paths
-        trig_bit_dict = {k : (getattr(trig_L1, v[0]) and getattr(trig_HLT, v[1]) if v else 0) for k,v in self.trigger_map.items()}
-        trig_bit_dict['trigger_OR'] = any(i for i in trig_bit_dict.values())
+        if self.trigger: 
+            bit = getattr(trig_L1, self.trigger[0]) and getattr(trig_HLT, self.trigger[1])
+            trig_bit_dict[self.params.trigger] = bit 
+        else:
+            for k, v in self.trigger_map.items():
+                if k == 'trigger_OR':
+                    continue
+                else:
+                    # Original Implementation: Require both L1 and HLT
+                    bit = getattr(trig_L1, v[0]) and getattr(trig_HLT, v[1]) if v else 0
+                    trig_bit_dict[k] = bit
+                    or_bits.append(bit)
+            
+            # trigger_OR remains strictly the OR of your L1+HLT pairs
+            trig_bit_dict['trigger_OR'] = any(or_bits)
+        
 
         # Trigger Efficiencies
         for path in trig_bit_dict.keys():
-            self.fill_th2(
-                self.h_diel_m_denom_ptbinned_dict[path],
-                diel_m, 
-                sublead_el_pt,
-                1
-            )
+            if dr > self.max_dr[path]: continue
 
+            self.fill_th2(self.h_diel_m_denom_ptbinned_dict[path], diel_m, sublead_el_pt, 1) # Note: use 1 for Data
+            
             if trig_bit_dict[path]:
-                self.fill_th2(
-                    self.h_diel_m_num_ptbinned_dict[path],
-                    diel_m, 
-                    sublead_el_pt,
-                    1
-                )
+                self.fill_th2(self.h_diel_m_num_ptbinned_dict[path], diel_m, sublead_el_pt, 1)
 
-                self.fill_th1(
-                    self.h_npv_dict[path],
-                    pv.npvs,
-                    1
-                )
+            self.fill_th1(self.h_npv_dict[path], pv.npvs, 1)
         return True
 
 
@@ -182,9 +169,14 @@ def main(cfg):
         if (global_cfg.test and ('test' not in job.name)) or (not global_cfg.test and ('test' in job.name)):
             continue
         job.input_files = get_input_files(job.inputs)
+        print(f'{job.name}: found {len(job.input_files)} files')
+        if not job.input_files:
+            print(f'  WARNING: no files found for input pattern: {job.inputs}')
+            continue
         job.output_dir = out_path
         job.output_file = out_path / f'effs_{job.name}.root'
         job.trigger_map = cfg.trigger_map
+        # job_.hlt_filter = job.hlt_filter if job.hlt_filter else None
         job_configs.append(copy.deepcopy(job))
 
     if 'mp' in global_cfg.run_strategy:

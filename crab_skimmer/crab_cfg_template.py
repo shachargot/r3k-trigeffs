@@ -21,7 +21,7 @@ config.JobType.inputFiles = [
         'crab_skimmer/crab_script.py',
         'crab_skimmer/crab_script.py',
         'crab_skimmer/FrameworkJobReport.xml',
-        'json_files/',
+        'jsons/',
 ]
 config.JobType.disableAutomaticOutputCollection = True
 config.JobType.outputFiles = ['output_skim.root']

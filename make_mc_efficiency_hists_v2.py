@@ -12,6 +12,8 @@ from pprint import pprint
 import json
 import yaml
 import ROOT
+from binnings import *
+from trigger_utils import *
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection, Object
@@ -19,32 +21,6 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 N_THREADS = 4
-
-class DotDict(dict):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for key, value in self.items():
-            if isinstance(value, dict):
-                self[key] = DotDict(value)
-
-    def __getattr__(self, key):
-        return self.get(key, False)
-
-    def __setattr__(self, key, value):
-        self[key] = DotDict(value) if isinstance(value, dict) else value
-
-    def __delattr__(self, key):
-        if key in self:
-            del self[key]
-        else:
-            raise AttributeError(f'No attribute named {key}')
-
-    def __deepcopy__(self, memo):
-        return DotDict(copy.deepcopy(dict(self), memo))
-
-    def to_dict(self):
-        return {k: v.to_dict() if isinstance(v, DotDict) else v for k, v in self.items()}
-
 
 def get_input_files(inputs, n_files=None):
     def _process(p):
@@ -60,7 +36,6 @@ def get_input_files(inputs, n_files=None):
                        for f in _process(Path(path))))
     return files[:n_files] if n_files and n_files <= len(files) else files
 
-
 def load_weights_json(json_name, table_name='FONLLweightRun3'):
     with open(json_name) as f:
         weight_table = json.load(f)
@@ -70,12 +45,64 @@ def load_weights_json(json_name, table_name='FONLLweightRun3'):
 
     return edges, weights
 
+def _mother_skipping(gen, i, pdg):
+    """Mother of particle i, skipping ancestors that are copies of the same species (FSR/Pythia chains)."""
+    m = gen[i].genPartIdxMother
+    while m >= 0 and abs(gen[m].pdgId) == pdg:
+        m = gen[m].genPartIdxMother
+    return m
+ 
+ 
+def _top_copy(gen, i, pdg):
+    """Climb to the first copy of particle species `pdg` in the chain (production-level copy)."""
+    while True:
+        m = gen[i].genPartIdxMother
+        if m >= 0 and abs(gen[m].pdgId) == pdg:
+            i = m
+        else:
+            return i
+ 
+ 
+def truth_jpsi(gen, el):
+    """Index of the top J/psi copy this reco electron descends from, or -1."""
+    i = el.genPartIdx
+    if i < 0 or abs(gen[i].pdgId) != 11:
+        return -1
+    m = _mother_skipping(gen, i, 11)
+    if m < 0 or gen[m].pdgId != 443:
+        return -1
+    return _top_copy(gen, m, 443)
+
+def b_plus_of(gen, jpsi_idx):
+    """B+- (top copy) that produced this J/psi, or None."""
+    m = gen[jpsi_idx].genPartIdxMother
+    if m < 0 or abs(gen[m].pdgId) != 521:
+        return None
+    return gen[_top_copy(gen, m, 521)]
+
+def load_pu_table(json_name, key):
+    """{'edges': [...], 'weights': [...]} for this trigger from make_pu_weights.py output, or None."""
+    if not json_name or not os.path.isfile(json_name):
+        if json_name:
+            print(f'WARNING: pu_weights_file {json_name} not found -> PU weight = 1')
+        return None
+    with open(json_name) as f:
+        table = json.load(f)
+    if key not in table:
+        print(f'WARNING: no PU table for "{key}" in {json_name} -> PU weight = 1')
+        return None
+    return np.array(table[key]['edges']), np.array(table[key]['weights'])
+
+
 class MCTriggerEfficiencyProducer(Module):
     def __init__(self, params):
         self.params = DotDict(params)
         self.writeHistFile = True
         self.trigger_map = self.params.trigger_map
+        self.trigger_map['trigger_OR'] = 0
+        self.trigger = self.trigger_map[self.params.trigger] if self.params.trigger else None
         self.theory_bins, self.theory_weights = load_weights_json(self.params.theory_weights_file)
+        self.max_dr = {k: max_dr_for(k, v[0] if v else '') for k, v in trigger_map.items()}
 
 
     def get_fonll_weight(self, b_pt):
@@ -123,11 +150,10 @@ class MCTriggerEfficiencyProducer(Module):
         Module.beginJob(self, histFile, histDirName)
 
         # Hist Binnings
-        self.diel_m_bins = np.linspace(2, 4, 100, dtype=np.double)
-        self.pt_bins     = np.array([5, 8, 11, 999], dtype=np.double)
-        # self.pt_bins     = np.array([5, 6, 7, 8, 9, 10, 11, 12, 13, 999], dtype=np.double)
-        self.dr_bins     = np.array([0, 0.12, 0.2, 0.28, 0.44, 1.], dtype=np.double)
-        self.npv_bins    = np.linspace(0, 100, 100, dtype=np.double)
+        # self.dr_bins     = np.array([0, 0.12, 0.2, 0.28, 0.44, 1.], dtype=np.double)
+        self.diel_m_bins = DIEL_M_BINS
+        self.pt_bins = PT_BINS
+        self.npv_bins = NPV_BINS
 
         # 1D Hists
         self.h_npv_dict    = {i : self.make_th1(f'npv_{i}', self.npv_bins) for i in self.trigger_map.keys()}
@@ -139,7 +165,8 @@ class MCTriggerEfficiencyProducer(Module):
 
     def analyze(self, event):
         # Define Physics Objects
-        electrons = Collection(event, 'Electron')
+        electrons = sorted(Collection(event,'Electron'), key=lambda e: e.pt, reverse=True)
+        # electrons = Collection(event, 'Electron')
         trig_L1   = Object(event, 'L1')
         trig_HLT  = Object(event, 'HLT')
         pv        = Object(event, 'PV')
@@ -147,7 +174,12 @@ class MCTriggerEfficiencyProducer(Module):
 
         # Find B meson & theory weight
         gen_parts = Collection(event, 'GenPart')
-        b_pt = self.get_b_meson(gen_parts).pt
+
+        m0 = self.jpsi_mother(electrons[0], gen_parts); m1 = self.jpsi_mother(electrons[1], gen_parts)
+        if m0 < 0 or m0 != m1: return False
+        b = self.get_b_meson(gen_parts)          # 15
+        if b is None: return False
+        b_pt = b.pt
         w_theory = self.get_fonll_weight(b_pt)
 
         # Define Kinematic Variables
@@ -155,35 +187,40 @@ class MCTriggerEfficiencyProducer(Module):
         sublead_el_pt = electrons[1].pt
         # sublead_eta   = electrons[1].eta
         # sublead_phi   = electrons[1].phi
-        # dr            = electrons[0].DeltaR(electrons[1])
+        dr            = electrons[0].DeltaR(electrons[1])
         # diel_pt       = (electrons[0].p4() + electrons[1].p4()).Pt()
         diel_m        = (electrons[0].p4() + electrons[1].p4()).M()
 
+        trig_bit_dict = {}
+        or_bits = [] 
+
         # Define Trigger Paths
-        trig_bit_dict = {k : getattr(trig_L1, v[0]) and getattr(trig_HLT, v[1]) for k,v in self.trigger_map.items()}
+        if self.trigger:
+            bit = getattr(trig_L1, self.trigger[0]) and getattr(trig_HLT, self.trigger[1])
+            trig_bit_dict[self.params.trigger] = bit
+        else:
+            for k, v in self.trigger_map.items():
+                if k == 'trigger_OR':
+                    continue
+                else:
+                    # Original Implementation: Require both L1 and HLT
+                    bit = getattr(trig_L1, v[0]) and getattr(trig_HLT, v[1]) if v else 0
+                    trig_bit_dict[k] = bit
+                    or_bits.append(bit)
+            
+            # trigger_OR remains strictly the OR of your L1+HLT pairs
+            trig_bit_dict['trigger_OR'] = any(or_bits)
 
         # Trigger Efficiencies
         for path in trig_bit_dict.keys():
-            self.fill_th2(
-                self.h_diel_m_denom_ptbinned_dict[path],
-                diel_m, 
-                sublead_el_pt,
-                w_theory
-            )
+            if dr > self.max_dr[path]: continue
 
+            self.fill_th2(self.h_diel_m_denom_ptbinned_dict[path], diel_m, sublead_el_pt, w_theory) # Note: use 1 for Data
+            
             if trig_bit_dict[path]:
-                self.fill_th2(
-                    self.h_diel_m_num_ptbinned_dict[path],
-                    diel_m, 
-                    sublead_el_pt,
-                    w_theory
-                )
+                self.fill_th2(self.h_diel_m_num_ptbinned_dict[path], diel_m, sublead_el_pt, w_theory)
 
-                self.fill_th1(
-                    self.h_npv_dict[path],
-                    pv.npvs,
-                    w_theory
-                )
+            self.fill_th1(self.h_npv_dict[path], pv.npvs, w_theory)
 
         return True
 
@@ -220,11 +257,12 @@ def main(cfg):
         job.output_file = out_path / f'effs_{job.name}.root'
         job.theory_weights_file = global_cfg.theory_weights_file
         job.trigger_map = cfg.trigger_map
+        # job.hlt_filter if job.hlt_filter else None
         job_configs.append(copy.deepcopy(job))
 
     if 'mp' in global_cfg.run_strategy:
         start_time = time.perf_counter()
-
+        print("Starting jobs")
         with mp.Pool(processes=N_THREADS) as pool:
             pool.map(worker, [job.to_dict() for job in job_configs])
 
@@ -233,6 +271,7 @@ def main(cfg):
 
     else:
         start_time = time.perf_counter()
+        print("Starting jobs")
         for job in job_configs:
             worker(job)
 

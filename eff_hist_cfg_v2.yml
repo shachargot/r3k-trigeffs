@@ -1,0 +1,108 @@
+global_cfg:
+  run_strategy: serial
+  output_dir: ./eff_hists/10_14_26
+  theory_weights_file: fonll_weights.json
+  pu_weights_file: pu_weights.json
+  test: False
+
+trigger_map:
+  L1_11p0_HLT_6p5 : ['DoubleEG11_er1p2_dR_Max0p6', 'DoubleEle6p5_eta1p22_mMax6']
+  L1_10p5_HLT_6p5 : ['DoubleEG10p5_er1p2_dR_Max0p6', 'DoubleEle6p5_eta1p22_mMax6']
+  L1_9p0_HLT_6p0  : ['DoubleEG9_er1p2_dR_Max0p7', 'DoubleEle6_eta1p22_mMax6']
+  L1_8p5_HLT_5p5  : ['DoubleEG8p5_er1p2_dR_Max0p7', 'DoubleEle5p5_eta1p22_mMax6']
+  L1_8p0_HLT_10p0  : ['DoubleEG8_er1p2_dR_Max0p7', 'DoubleEle10_eta1p22_mMax6']
+  L1_8p0_HLT_5p0  : ['DoubleEG8_er1p2_dR_Max0p7', 'DoubleEle5_eta1p22_mMax6']
+  L1_7p5_HLT_10p0  : ['DoubleEG7p5_er1p2_dR_Max0p7', 'DoubleEle10_eta1p22_mMax6']
+  L1_7p5_HLT_5p0  : ['DoubleEG7p5_er1p2_dR_Max0p7', 'DoubleEle5_eta1p22_mMax6']
+  L1_7p0_HLT_10p0  : ['DoubleEG7_er1p2_dR_Max0p8', 'DoubleEle10_eta1p22_mMax6']
+  L1_7p0_HLT_5p0  : ['DoubleEG7_er1p2_dR_Max0p8', 'DoubleEle5_eta1p22_mMax6']
+  L1_6p5_HLT_10p0  : ['DoubleEG6p5_er1p2_dR_Max0p8', 'DoubleEle10_eta1p22_mMax6']
+  L1_6p5_HLT_4p5  : ['DoubleEG6p5_er1p2_dR_Max0p8', 'DoubleEle4p5_eta1p22_mMax6']
+  L1_6p0_HLT_10p0  : ['DoubleEG6_er1p2_dR_Max0p8', 'DoubleEle10_eta1p22_mMax6']
+  L1_6p0_HLT_4p0  : ['DoubleEG6_er1p2_dR_Max0p8', 'DoubleEle4_eta1p22_mMax6']
+  L1_5p5_HLT_10p0  : ['DoubleEG5p5_er1p2_dR_Max0p8', 'DoubleEle10_eta1p22_mMax6']
+  L1_5p5_HLT_4p0  : ['DoubleEG5p5_er1p2_dR_Max0p8', 'DoubleEle4_eta1p22_mMax6']
+  # L1_5p0_HLT_4p0  : ['DoubleEG5_er1p2_dR_Max0p9', 'DoubleEle4_eta1p22_mMax6']
+
+
+x-definitions:
+    low_dr_cut: &low_dr_cut '(sqrt(pow(Electron_eta[0] - Electron_eta[1], 2) + pow( ((Electron_phi[0] - Electron_phi[1]) > 3.14159265 ? (Electron_phi[0] - Electron_phi[1]) - 2*3.14159265 : ((Electron_phi[0] - Electron_phi[1]) <= -3.14159265 ? (Electron_phi[0] - Electron_phi[1]) + 2*3.14159265 : (Electron_phi[0] - Electron_phi[1]))), 2)) < 0.3)'
+    # high_dr_cut: &high_dr_cut '(sqrt(pow(Electron_eta[0] - Electron_eta[1], 2) + pow( ((Electron_phi[0] - Electron_phi[1]) > 3.14159265 ? (Electron_phi[0] - Electron_phi[1]) - 2*3.14159265 : ((Electron_phi[0] - Electron_phi[1]) <= -3.14159265 ? (Electron_phi[0] - Electron_phi[1]) + 2*3.14159265 : (Electron_phi[0] - Electron_phi[1]))), 2)) > 0.3)'
+    high_dr_cut: &high_dr_cut >- 
+        sqrt(pow(Electron_eta[0]-Electron_eta[1],2) + pow(acos(cos(Electron_phi[0]-Electron_phi[1])),2)) > 0.20
+    low_dxy_cut: &low_dxy_cut 'Electron_dxy[0] < 0.002 && Electron_dxy[1] < 0.002'
+    high_dxy_cut: &high_dxy_cut 'Electron_dxy[0] > 0.002 && Electron_dxy[1] > 0.002'
+
+mc_samples:
+ #  - name: jpsi_resonant_test
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_05_15_26/260515_200723/0000/output_skim_1.root
+ #    presel: null
+        
+ - name: jpsi_resonant
+   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/*.root
+   presel: null
+
+ #  - name: jpsi_resonant_L1_11p0_HLT_6p5
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/
+ #    presel: null
+ #    trigger: L1_11p0_HLT_6p5
+ 
+ #  - name: jpsi_resonant_L1_10p5_HLT_6p5
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/
+ #    presel: null
+ #    trigger: L1_10p5_HLT_6p5
+       
+ # - name: jpsi_resonant_L1_7p0_HLT_5p0
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/
+ #   presel: null
+ #   trigger: L1_7p0_HLT_5p0
+ 
+ #  - name: jpsi_resonant_L1_6p5_HLT_4p5
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/
+ #    presel: null
+ #    trigger: L1_6p5_HLT_4p5
+ 
+ # - name: jpsi_resonant_L1_6p0_HLT_4p0
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/
+ #   presel: null
+ #   trigger: L1_6p0_HLT_4p0
+
+
+data_samples:
+ #  - name: L1_11p0_HLT_6p5
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/L1_11p0_HLT_6p5_Excl/*/*/260903_*/*/*.root
+ #    presel: null
+ #    trigger: L1_11p0_HLT_6p5
+  
+ #  - name: L1_10p5_HLT_6p5
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/L1_10p5_HLT_6p5_Excl/*/*/260903_*/*/*.root
+ #    presel: null
+ #    trigger: L1_10p5_HLT_6p5
+
+
+ #  - name: L1_7p0_HLT_5p0
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/L1_7p0_HLT_5p0_Excl/*/*/260903_*/*/*.root
+ #    presel: null
+ #    trigger: L1_7p0_HLT_5p0
+    
+ # - name: L1_6p5_HLT_4p5
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/L1_6p5_HLT_4p5_Excl/*/*/260903_*/*/*.root
+ #   presel: null
+ #   trigger: L1_6p5_HLT_4p5
+ 
+ # - name: L1_6p0_HLT_4p0
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/L1_6p0_HLT_4p0_Excl/*/*/260915_*/*/*.root
+ #   presel: null
+ #   trigger: L1_6p0_HLT_4p0
+
+
+ #  - name: trigger_OR_test
+ #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023new/trigger_OR/CRAB_UserFiles/crab_trigger_OR_01_21_26/260121_*/0000/*.root
+ #    presel: null
+
+  
+
+ - name: data_trigger_OR
+   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/trigger_OR/*/*/260908_*/*/*.root
+   trigger: trigger_OR
+   presel: null
