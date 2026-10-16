@@ -177,4 +177,3 @@ datasets:
   #   preselection: *preselection_data
   #   json_path: jsons/2023fixed/trigger_OR.json
   #   output_path:  /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/trigger_OR
-

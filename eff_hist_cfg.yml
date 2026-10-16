@@ -6,6 +6,21 @@ global_cfg:
 
 
 data_samples:
+  # - name: data_L1_11p0_HLT_6p5_Incl
+  #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/nzipper/ParkingDoubleMuonLowMassSkims/L1_11p0_HLT_6p5_Incl/
+  #   trigger: L1_11p0_HLT_6p5_Incl
+  #   presel: null
+
+  # - name: data_L1_8p0_HLT_5p0_Incl
+  #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/nzipper/ParkingDoubleMuonLowMassSkims/L1_8p0_HLT_5p0_Incl/
+  #   trigger: L1_8p0_HLT_5p0_Incl
+  #   presel: null
+
+  # - name: data_L1_5p5_HLT_4p0_Incl
+  #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/nzipper/ParkingDoubleMuonLowMassSkims/L1_5p5_HLT_4p0_Incl/
+  #   trigger: L1_5p5_HLT_4p0_Incl
+  #   presel: null
+
   # - name: data_L1_11p0_HLT_6p5_Excl
   #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/nzipper/ParkingDoubleMuonLowMassSkims/L1_11p0_HLT_6p5_Excl/CRAB_UserFiles/crab_L1_11p0_HLT_6p5_Excl_02_19_25/250219_211312/0000
   #   trigger: L1_11p0_HLT_6p5_Excl
@@ -20,6 +35,11 @@ data_samples:
   #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/nzipper/ParkingDoubleMuonLowMassSkims/trigger_OR/CRAB_UserFiles/crab_trigger_OR_02_19_25/250219_211608/0000/
   #   trigger: trigger_OR
   #   presel: null
+
+  - name: data_trigger_OR
+    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/nzipper/ParkingDoubleMuonLowMassSkims/trigger_OR_v2/CRAB_UserFiles/crab_trigger_OR_08_06_25/250806_193845/0000/
+    trigger: trigger_OR
+    presel: null
 
   # - name: data_L1_10p5_HLT_6p5_Excl
   #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/nzipper/ParkingDoubleMuonLowMassSkims/L1_10p5_HLT_6p5_Excl/CRAB_UserFiles/crab_L1_10p5_HLT_6p5_Excl_02_19_25/250219_211324/0000
@@ -142,7 +162,7 @@ triggers:
     lint: 2.232
     dr_cut: 0.6
     pt_cut: 11.0
-    json_file: L1_11p0_HLT_6p5_Excl_Final.json
+    json_file: L1_11p0_HLT_6p5_Incl_Final.json
 
   L1_10p5_HLT_10p0_Excl:
     name: L1_10p5_HLT_10p0
@@ -156,7 +176,7 @@ triggers:
     lint: 1.958
     dr_cut: 0.6
     pt_cut: 10.5
-    json_file: L1_10p5_HLT_6p5_Excl_Final.json
+    json_file: L1_10p5_HLT_6p5_Incl_Final.json
 
   L1_9p0_HLT_10p0_Excl:
     name: L1_9p0_HLT_10p0
@@ -165,12 +185,12 @@ triggers:
     pt_cut: 9.0
     json_file: L1_9p0_HLT_10p0_Excl_Final.json
 
-  L1_9p0_HLT_6p0_Excl:
+  L1_9p0_HLT_6p0_Incl:
     name: L1_9p0_HLT_6p0
     lint: 1.973
     dr_cut: 0.7
     pt_cut: 9.0
-    json_file: L1_9p0_HLT_6p0_Excl_Final.json
+    json_file: L1_9p0_HLT_6p0_Incl_Final.json
 
   L1_8p5_HLT_10p0_Excl:
     name: L1_8p5_HLT_10p0
@@ -184,7 +204,7 @@ triggers:
     lint: 1.04
     dr_cut: 0.7
     pt_cut: 8.5
-    json_file: L1_8p5_HLT_5p5_Excl_Final.json
+    json_file: L1_8p5_HLT_5p5_Incl_Final.json
 
   L1_8p0_HLT_10p0_Excl:
     name: L1_8p0_HLT_10p0
@@ -193,12 +213,12 @@ triggers:
     pt_cut: 8.0
     json_file: L1_8p0_HLT_10p0_Excl_Final.json
 
-  L1_8p0_HLT_5p0_Excl:
+  L1_8p0_HLT_5p0_Incl:
     name: L1_8p0_HLT_5p0
     lint: 2.29
     dr_cut: 0.7
     pt_cut: 8.0
-    json_file: L1_8p0_HLT_5p0_Excl_Final.json
+    json_file: L1_8p0_HLT_5p0_Incl_Final.json
 
   L1_7p5_HLT_10p0_Excl:
     name: L1_7p5_HLT_10p0
@@ -221,7 +241,7 @@ triggers:
     pt_cut: 7.0
     json_file: L1_7p0_HLT_10p0_Excl_Final.json
 
-  L1_7p0_HLT_5p0_Excl:
+  L1_7p0_HLT_5p0_Incl:
     name: L1_7p0_HLT_5p0
     lint: 2.61
     dr_cut: 0.8
@@ -235,7 +255,7 @@ triggers:
     pt_cut: 6.5
     json_file: L1_6p5_HLT_10p0_Excl_Final.json
 
-  L1_6p5_HLT_4p5_Excl:
+  L1_6p5_HLT_4p5_Incl:
     name: L1_6p5_HLT_4p5
     lint: 5.68
     dr_cut: 0.8
@@ -249,12 +269,12 @@ triggers:
     pt_cut: 6.0
     json_file: L1_6p0_HLT_10p0_Excl_Final.json
 
-  L1_6p0_HLT_4p0_Excl:
+  L1_6p0_HLT_4p0_Incl:
     name: L1_6p0_HLT_4p0
     lint: 2.03
     dr_cut: 0.8
     pt_cut: 6.0
-    json_file: L1_6p0_HLT_4p0_Excl_Final.json
+    json_file: L1_6p0_HLT_4p0_Incl_Final.json
 
   L1_5p5_HLT_10p0_Excl:
     name: L1_5p5_HLT_10p0
@@ -268,28 +288,28 @@ triggers:
     lint: 0.03
     dr_cut: 0.8
     pt_cut: 5.5
-    json_file: L1_5p5_HLT_6p0_Excl_Final.json
+    json_file: L1_5p5_HLT_6p0_Incl_Final.json
 
-  L1_5p5_HLT_4p0_Excl:
+  L1_5p5_HLT_4p0_Incl:
     name: L1_5p5_HLT_4p0
     lint: 1.904
     dr_cut: 0.8
     pt_cut: 5.5
-    json_file: L1_5p5_HLT_4p0_Excl_Final.json
+    json_file: L1_5p5_HLT_4p0_Incl_Final.json
 
-  L1_5p0_HLT_4p0_Excl:
+  L1_5p0_HLT_4p0_Incl:
     name: L1_5p0_HLT_4p0
     lint: 0.085
     dr_cut: 0.9
     pt_cut: 5.0
-    json_file: L1_5p0_HLT_4p0_Excl_Final.json
+    json_file: L1_5p0_HLT_4p0_Incl_Final.json
 
-  L1_4p5_HLT_4p0_Excl:
+  L1_4p5_HLT_4p0_Incl:
     name: L1_4p5_HLT_4p0
     lint: 0.021
     dr_cut: 0.9
     pt_cut: 4.5
-    json_file: L1_4p5_HLT_4p0_Excl_Final.json
+    json_file: L1_4p5_HLT_4p0_Incl_Final.json
 
   trigger_OR:
     name: trigger_OR
@@ -297,4 +317,3 @@ triggers:
     dr_cut: 0.9
     pt_cut: 4.5
     json_file: trigger_OR.json
-

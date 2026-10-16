@@ -226,12 +226,13 @@ class TriggerEfficiencyProducer(Module):
         diel_m        = (electrons[0].p4() + electrons[1].p4()).M()
 
         trigger_pass = trigger_dict[self.trigger]['pass']
-        pt_pass      = sublead_el_pt >= pt_cut
-        dr_pass      = dr <= dr_cut
+        pt_pass      = sublead_el_pt >= 4.5 #pt_cut
+        dr_pass      = dr <= 0.9 #dr_cut
+        qual_pass    = electrons[0].cutBased>=2 and electrons[1].cutBased>=2
 
-
-        # if dr<0.2 or dr>0.3:
-        #     return True
+        if (not pt_pass) or (not dr_pass) or (qual_pass):
+        # if (not pt_pass) or (not dr_pass):
+            return True
 
 
         # Fill Kinematic Plots
@@ -255,22 +256,22 @@ class TriggerEfficiencyProducer(Module):
             self.h_npv.Fill(npv, np.ones_like(npv)*wgt)
 
         # Trigger Efficiencies
-        if pt_pass:
-            self.fill_th2(self.h_diel_m_denom_drbinned, diel_m, dr, 1)
-            if trigger_pass:
-                self.fill_th2(self.h_diel_m_num_drbinned, diel_m, dr, wgt)
-        if dr_pass:
-            self.fill_th2(self.h_diel_m_denom_ptbinned, diel_m, sublead_el_pt, 1)
-            if trigger_pass:
-                self.fill_th2(self.h_diel_m_num_ptbinned, diel_m, sublead_el_pt, wgt)
-        if pt_pass and dr_pass:
-            self.fill_th2(self.h_diel_m_denom_etabinned, diel_m, sublead_eta, 1)
-            self.fill_th2(self.h_diel_m_denom_npvbinned, diel_m, npv, 1)
-            self.fill_th2(self.h_diel_m_denom_dieptbinned, diel_m, diel_pt, 1)
-            if trigger_pass:
-                self.fill_th2(self.h_diel_m_num_etabinned, diel_m, sublead_eta, wgt)
-                self.fill_th2(self.h_diel_m_num_npvbinned, diel_m, npv, wgt)
-                self.fill_th2(self.h_diel_m_num_dieptbinned, diel_m, diel_pt, wgt)
+        # if pt_pass:
+        self.fill_th2(self.h_diel_m_denom_drbinned, diel_m, dr, 1)
+        if trigger_pass:
+            self.fill_th2(self.h_diel_m_num_drbinned, diel_m, dr, wgt)
+        # if dr_pass:
+        self.fill_th2(self.h_diel_m_denom_ptbinned, diel_m, sublead_el_pt, 1)
+        if trigger_pass:
+            self.fill_th2(self.h_diel_m_num_ptbinned, diel_m, sublead_el_pt, wgt)
+        # if pt_pass and dr_pass:
+        self.fill_th2(self.h_diel_m_denom_etabinned, diel_m, sublead_eta, 1)
+        self.fill_th2(self.h_diel_m_denom_npvbinned, diel_m, npv, 1)
+        self.fill_th2(self.h_diel_m_denom_dieptbinned, diel_m, diel_pt, 1)
+        if trigger_pass:
+            self.fill_th2(self.h_diel_m_num_etabinned, diel_m, sublead_eta, wgt)
+            self.fill_th2(self.h_diel_m_num_npvbinned, diel_m, npv, wgt)
+            self.fill_th2(self.h_diel_m_num_dieptbinned, diel_m, diel_pt, wgt)
 
         return True
 
@@ -315,21 +316,21 @@ def main(cfg):
         job.output_file = out_path / f'effs_{job.name}.root'
         job_configs.append(copy.deepcopy(job))
 
-    for job in cfg.mc_samples:
-        job = DotDict(job)
-        job.mc = True
-        if global_cfg.test and ('test' not in job.name):
-            continue
-        elif not global_cfg.test and ('test' in job.name):
-            continue
-        job.input_files = get_input_files(job.inputs)
-        for trig_name in job.triggers:
-            job.trigger_cfg = trigger_cfg[trig_name]
-            job.triggers = trigger_cfg
-            job.json = None
-            job.output_dir = out_path
-            job.output_file = out_path / f'effs_{job.name}_{trig_name}.root'
-            job_configs.append(copy.deepcopy(job))
+    # for job in cfg.mc_samples:
+    #     job = DotDict(job)
+    #     job.mc = True
+    #     if global_cfg.test and ('test' not in job.name):
+    #         continue
+    #     elif not global_cfg.test and ('test' in job.name):
+    #         continue
+    #     job.input_files = get_input_files(job.inputs)
+    #     for trig_name in job.triggers:
+    #         job.trigger_cfg = trigger_cfg[trig_name]
+    #         job.triggers = trigger_cfg
+    #         job.json = None
+    #         job.output_dir = out_path
+    #         job.output_file = out_path / f'effs_{job.name}_{trig_name}.root'
+    #         job_configs.append(copy.deepcopy(job))
 
     if 'mp' in global_cfg.run_strategy:
         start_time = time.perf_counter()

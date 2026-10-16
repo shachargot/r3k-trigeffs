@@ -100,7 +100,6 @@ data_samples:
  #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023new/trigger_OR/CRAB_UserFiles/crab_trigger_OR_01_21_26/260121_*/0000/*.root
  #    presel: null
 
-  
 
  - name: data_trigger_OR
    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/trigger_OR/*/*/260908_*/*/*.root

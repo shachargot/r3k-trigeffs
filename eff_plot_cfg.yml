@@ -1,111 +1,141 @@
 inputs:
-  data_dir: eff_hists/2_21_25/
-  mc_dir: eff_hists/2_21_25/
+  data_dir: eff_hists/singlepath_incl/
+  mc_dir: eff_hists/singlepath_incl/
   hist_dir: hists/
 
 output:
-  output_dir: eff_plots/
+  output_dir: eff_plots/singlepath_incl
 
 plots:
-  trigger_OR_test:
+  # trigger_OR_test:
+  #   files:
+  #     data: effs_data_trigger_OR_test.root
+  #     mc: effs_jpsi_trigger_OR_test_trigger_OR.root
+  #   triggers: [trigger_OR]
+  #   variables: [pt,dr]
+  # trigger_OR:
+  #   files:
+  #     data: effs_data_trigger_OR.root
+  #     mc: effs_jpsi_resonant_trigger_OR.root
+  #   triggers: [trigger_OR]
+  #   variables: [pt]
+  # L1_11p0_HLT_6p5_Incl:
+  #   files:
+  #     data: effs_data_L1_11p0_HLT_6p5_Incl.root
+  #     mc: effs_jpsi_resonant_L1_11p0_HLT_6p5_Incl.root
+  #   triggers: [L1_11p0_HLT_6p5_Incl]
+  #   variables: [pt]
+  # L1_5p5_HLT_4p0_Incl:
+  #   files:
+  #     data: effs_data_L1_5p5_HLT_4p0_Incl.root
+  #     mc: effs_jpsi_resonant_L1_5p5_HLT_4p0_Incl.root
+  #   triggers: [L1_5p5_HLT_4p0_Incl]
+  #   variables: [pt]
+  # L1_11p0_HLT_6p5_Excl:
+  #   files:
+  #     data: effs_data_L1_11p0_HLT_6p5_Excl.root
+  #     mc: effs_jpsi_resonant_L1_11p0_HLT_6p5_Excl.root
+  #   triggers: [L1_11p0_HLT_6p5_Excl]
+  #   variables: [pt,dr]
+  # L1_10p5_HLT_6p5_Excl:
+  #   files:
+  #     data: effs_data_L1_10p5_HLT_6p5_Excl.root
+  #     mc: effs_jpsi_resonant_L1_10p5_HLT_6p5_Excl.root
+  #   triggers: [L1_10p5_HLT_6p5_Excl]
+  #   variables: [pt,dr]
+  # L1_10p5_HLT_5p0_Excl:
+  #   files:
+  #     data: effs_data_L1_10p5_HLT_5p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_10p5_HLT_5p0_Excl.root
+  #   triggers: [L1_10p5_HLT_5p0_Excl]
+  #   variables: [pt,dr]
+  # L1_9p0_HLT_6p0_Excl:
+  #   files:
+  #     data: effs_data_L1_9p0_HLT_6p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_9p0_HLT_6p0_Excl.root
+  #   triggers: [L1_9p0_HLT_6p0_Excl]
+  #   variables: [pt,dr]
+  # L1_8p5_HLT_5p5_Excl:
+  #   files:
+  #     data: effs_data_L1_8p5_HLT_5p5_Excl.root
+  #     mc: effs_jpsi_resonant_L1_8p5_HLT_5p5_Excl.root
+  #   triggers: [L1_8p5_HLT_5p5_Excl]
+  #   variables: [pt,dr]
+  # L1_8p5_HLT_5p0_Excl:
+  #   files:
+  #     data: effs_data_L1_8p5_HLT_5p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_8p5_HLT_5p0_Excl.root
+  #   triggers: [L1_8p5_HLT_5p0_Excl]
+  #   variables: [pt,dr]
+  # L1_8p0_HLT_5p0_Excl:
+  #   files:
+  #     data: effs_data_L1_8p0_HLT_5p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_8p0_HLT_5p0_Excl.root
+  #   triggers: [L1_8p0_HLT_5p0_Excl]
+  #   variables: [pt,dr]
+  # L1_7p5_HLT_5p0_Excl:
+  #   files:
+  #     data: effs_data_L1_7p5_HLT_5p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_7p5_HLT_5p0_Excl.root
+  #   triggers: [L1_7p5_HLT_5p0_Excl]
+  #   variables: [pt,dr]
+  # L1_7p0_HLT_5p0_Excl:
+  #   files:
+  #     data: effs_data_L1_7p0_HLT_5p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_7p0_HLT_5p0_Excl.root
+  #   triggers: [L1_7p0_HLT_5p0_Excl]
+  #   variables: [pt,dr]
+  # L1_6p5_HLT_4p5_Excl:
+  #   files:
+  #     data: effs_data_L1_6p5_HLT_4p5_Excl.root
+  #     mc: effs_jpsi_resonant_L1_6p5_HLT_4p5_Excl.root
+  #   triggers: [L1_6p5_HLT_4p5_Excl]
+  #   variables: [pt,dr]
+  # L1_6p0_HLT_4p0_Excl:
+  #   files:
+  #     data: effs_data_L1_6p0_HLT_4p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_6p0_HLT_4p0_Excl.root
+  #   triggers: [L1_6p0_HLT_4p0_Excl]
+  #   variables: [pt,dr]
+  # L1_5p5_HLT_6p0_Excl:
+  #   files:
+  #     data: effs_data_L1_5p5_HLT_6p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_5p5_HLT_6p0_Excl.root
+  #   triggers: [L1_5p5_HLT_6p0_Excl]
+  #   variables: [pt,dr]
+  # L1_5p5_HLT_4p0_Excl:
+  #   files:
+  #     data: effs_data_L1_5p5_HLT_4p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_5p5_HLT_4p0_Excl.root
+  #   triggers: [L1_5p5_HLT_4p0_Excl]
+  #   variables: [pt,dr]
+  # L1_5p0_HLT_4p0_Excl:
+  #   files:
+  #     data: effs_data_L1_5p0_HLT_4p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_5p0_HLT_4p0_Excl.root
+  #   triggers: [L1_5p0_HLT_4p0_Excl]
+  #   variables: [pt,dr]
+  # L1_4p5_HLT_4p0_Excl:
+  #   files:
+  #     data: effs_data_L1_4p5_HLT_4p0_Excl.root
+  #     mc: effs_jpsi_resonant_L1_4p5_HLT_4p0_Excl.root
+  #   triggers: [L1_4p5_HLT_4p0_Excl]
+  #   variables: [pt,dr]
+  L1_11p0_HLT_6p5_Incl:
     files:
-      data: effs_data_trigger_OR_test.root
-      mc: effs_jpsi_trigger_OR_test_trigger_OR.root
-    triggers: [trigger_OR]
+      data: effs_data_L1_11p0_HLT_6p5_Incl.root
+      mc: effs_jpsi_resonant_L1_11p0_HLT_6p5_Incl.root
+    triggers: [L1_11p0_HLT_6p5_Incl]
+    variables: [pt,dr]
+  L1_8p0_HLT_5p0_Incl:
+    files:
+      data: effs_data_L1_8p0_HLT_5p0_Incl.root
+      mc: effs_jpsi_resonant_L1_8p0_HLT_5p0_Incl.root
+    triggers: [L1_8p0_HLT_5p0_Incl]
     variables: [pt]
-  trigger_OR:
+  L1_5p5_HLT_4p0_Incl:
     files:
-      data: effs_data_trigger_OR.root
-      mc: effs_jpsi_resonant_trigger_OR.root
-    triggers: [trigger_OR]
-    variables: [pt]
-  L1_11p0_HLT_6p5_Excl:
-    files:
-      data: effs_data_L1_11p0_HLT_6p5_Excl.root
-      mc: effs_jpsi_resonant_L1_11p0_HLT_6p5_Excl.root
-    triggers: [L1_11p0_HLT_6p5_Excl]
-    variables: [pt]
-  L1_10p5_HLT_6p5_Excl:
-    files:
-      data: effs_data_L1_10p5_HLT_6p5_Excl.root
-      mc: effs_jpsi_resonant_L1_10p5_HLT_6p5_Excl.root
-    triggers: [L1_10p5_HLT_6p5_Excl]
-    variables: [pt]
-  L1_10p5_HLT_5p0_Excl:
-    files:
-      data: effs_data_L1_10p5_HLT_5p0_Excl.root
-      mc: effs_jpsi_resonant_L1_10p5_HLT_5p0_Excl.root
-    triggers: [L1_10p5_HLT_5p0_Excl]
-    variables: [pt]
-  L1_9p0_HLT_6p0_Excl:
-    files:
-      data: effs_data_L1_9p0_HLT_6p0_Excl.root
-      mc: effs_jpsi_resonant_L1_9p0_HLT_6p0_Excl.root
-    triggers: [L1_9p0_HLT_6p0_Excl]
-    variables: [pt]
-  L1_8p5_HLT_5p5_Excl:
-    files:
-      data: effs_data_L1_8p5_HLT_5p5_Excl.root
-      mc: effs_jpsi_resonant_L1_8p5_HLT_5p5_Excl.root
-    triggers: [L1_8p5_HLT_5p5_Excl]
-    variables: [pt]
-  L1_8p5_HLT_5p0_Excl:
-    files:
-      data: effs_data_L1_8p5_HLT_5p0_Excl.root
-      mc: effs_jpsi_resonant_L1_8p5_HLT_5p0_Excl.root
-    triggers: [L1_8p5_HLT_5p0_Excl]
-    variables: [pt]
-  L1_8p0_HLT_5p0_Excl:
-    files:
-      data: effs_data_L1_8p0_HLT_5p0_Excl.root
-      mc: effs_jpsi_resonant_L1_8p0_HLT_5p0_Excl.root
-    triggers: [L1_8p0_HLT_5p0_Excl]
-    variables: [pt]
-  L1_7p5_HLT_5p0_Excl:
-    files:
-      data: effs_data_L1_7p5_HLT_5p0_Excl.root
-      mc: effs_jpsi_resonant_L1_7p5_HLT_5p0_Excl.root
-    triggers: [L1_7p5_HLT_5p0_Excl]
-    variables: [pt]
-  L1_7p0_HLT_5p0_Excl:
-    files:
-      data: effs_data_L1_7p0_HLT_5p0_Excl.root
-      mc: effs_jpsi_resonant_L1_7p0_HLT_5p0_Excl.root
-    triggers: [L1_7p0_HLT_5p0_Excl]
-    variables: [pt]
-  L1_6p5_HLT_4p5_Excl:
-    files:
-      data: effs_data_L1_6p5_HLT_4p5_Excl.root
-      mc: effs_jpsi_resonant_L1_6p5_HLT_4p5_Excl.root
-    triggers: [L1_6p5_HLT_4p5_Excl]
-    variables: [pt]
-  L1_6p0_HLT_4p0_Excl:
-    files:
-      data: effs_data_L1_6p0_HLT_4p0_Excl.root
-      mc: effs_jpsi_resonant_L1_6p0_HLT_4p0_Excl.root
-    triggers: [L1_6p0_HLT_4p0_Excl]
-    variables: [pt]
-  L1_5p5_HLT_6p0_Excl:
-    files:
-      data: effs_data_L1_5p5_HLT_6p0_Excl.root
-      mc: effs_jpsi_resonant_L1_5p5_HLT_6p0_Excl.root
-    triggers: [L1_5p5_HLT_6p0_Excl]
-    variables: [pt]
-  L1_5p5_HLT_4p0_Excl:
-    files:
-      data: effs_data_L1_5p5_HLT_4p0_Excl.root
-      mc: effs_jpsi_resonant_L1_5p5_HLT_4p0_Excl.root
-    triggers: [L1_5p5_HLT_4p0_Excl]
-    variables: [pt]
-  L1_5p0_HLT_4p0_Excl:
-    files:
-      data: effs_data_L1_5p0_HLT_4p0_Excl.root
-      mc: effs_jpsi_resonant_L1_5p0_HLT_4p0_Excl.root
-    triggers: [L1_5p0_HLT_4p0_Excl]
-    variables: [pt]
-  L1_4p5_HLT_4p0_Excl:
-    files:
-      data: effs_data_L1_4p5_HLT_4p0_Excl.root
-      mc: effs_jpsi_resonant_L1_4p5_HLT_4p0_Excl.root
-    triggers: [L1_4p5_HLT_4p0_Excl]
+      data: effs_data_L1_5p5_HLT_4p0_Incl.root
+      mc: effs_jpsi_resonant_L1_5p5_HLT_4p0_Incl.root
+    triggers: [L1_5p5_HLT_4p0_Incl]
     variables: [pt]

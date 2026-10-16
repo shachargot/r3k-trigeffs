@@ -50,7 +50,6 @@ class DotDict(dict):
     def to_dict(self):
         return {k: v.to_dict() if isinstance(v, DotDict) else v for k, v in self.items()}
 
-
 class SkimEvents(Module):
     def __init__(self):
         self.writeHistFile = True
@@ -267,6 +266,9 @@ def main(cfg):
     else:
         raise ValueError(f'Invalid mode "{cfg.run_strategy}". Must be one of ["serial", "mp", "crab"]')
 
+
+    else:
+        raise ValueError(f'Invalid mode "{cfg.run_strategy}". Must be one of ["serial", "mp", "crab"]')
 
     if cfg.verbose:
         finish_time = time.perf_counter()

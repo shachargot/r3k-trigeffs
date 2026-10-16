@@ -60,6 +60,7 @@ def set_verbosity(verb):
 def get_event_count(h, xrange=None):
     nEvents = 0.0
     err = 0.0
+
     if xrange is not None:
         bin_low = h.GetXaxis().FindBin(xrange[0])
         bin_high = h.GetXaxis().FindBin(xrange[1])
@@ -416,6 +417,21 @@ def do_fit(h, signal_only=False, savename=None, get_params=False, signal_params=
 
             if not math.isnan(chi2) and chi2 < chi2_threshold and sig_unc_ratio < 1:
                 good_fit = True
+            
+        if fit_result and not good_fit:
+            params_to_randomize = [cb_sigma, cb_alpha, cb_n] + bern_pars 
+            for param in params_to_randomize:
+                current_val = param.getVal()
+                min_val = param.getMin()
+                max_val = param.getMax()
+                
+                perturbation_range = (max_val - min_val) * 0.1
+                random_shift = np.random.uniform(-perturbation_range, perturbation_range)
+                new_val = current_val + random_shift
+                new_val = max(min_val, min(max_val, new_val))
+                
+                param.setVal(new_val)
+                param.setError(0.0)
         
 
         if fit_result and not good_fit:
@@ -802,7 +818,6 @@ def make_eff_plot_dict(cfg):
 
             eff_dict['data_num_yields'].append((n_num_data, n_num_data_err))
             eff_dict['data_denom_yields'].append((n_denom_data, n_denom_data_err))
-
 
         if plot_cfg.mc_file and plot_cfg.mc_triggers:
             mc_file = ROOT.TFile(str(plot_cfg.mc_file))
