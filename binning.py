@@ -11,7 +11,7 @@ FIT_RANGE = (2.5, 3.4)
 
 # Sublead-electron pT [GeV]. Last edge is a real edge (events above it go to overflow and
 # are not used), so the plotted x-range is the filled x-range.
-PT_BINS = np.array([4., 5., 6., 8., 12., 20.], dtype=np.double)
+PT_BINS = np.array([5., 6., 8., 12., 20.], dtype=np.double)
 
 DR_BINS = np.array([0., 0.12, 0.2, 0.28, 0.44, 1.], dtype=np.double)
 ETA_BINS = np.array([-1.22, -0.7, -0.2, 0.2, 0.7, 1.22], dtype=np.double)
@@ -23,3 +23,8 @@ NPV_BINS = np.linspace(0., 100., 101, dtype=np.double)
 # (acceptance closure) can be derived without rerunning the skim.
 LEADPT_BINS = np.array([4., 5., 6., 7., 8., 10., 12., 16., 20., 30., 100.], dtype=np.double)
 DR_FINE_BINS = np.linspace(0., 1., 21, dtype=np.double)
+DXY_FINE_BINS = np.array([0, 0.0025, 0.005, 0.0075, 0.01, 0.015, 0.02, 0.035, 0.05, 0.075,
+                          0.1, 0.15, 0.2, 0.35, 0.5, 0.75, 1.0])
+DZ_FINE_BINS  = np.array([0, 0.005, 0.01, 0.015, 0.02, 0.035, 0.05, 0.075, 0.1, 0.15,
+                          0.2, 0.35, 0.5, 0.75, 1.0])
+JPSIPT_BINS = np.linspace(0, 50, 51)

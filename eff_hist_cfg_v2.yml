@@ -2,10 +2,11 @@ global_cfg:
   run_strategy: serial
   output_dir: ./eff_hists/10_14_26
   theory_weights_file: fonll_weights.json
-  pu_weights_file: pu_weights.json
+  # pu_weights_file: pu_weights.json
   test: False
 
 trigger_map:
+  # 2023
   L1_11p0_HLT_6p5 : ['DoubleEG11_er1p2_dR_Max0p6', 'DoubleEle6p5_eta1p22_mMax6']
   L1_10p5_HLT_6p5 : ['DoubleEG10p5_er1p2_dR_Max0p6', 'DoubleEle6p5_eta1p22_mMax6']
   L1_9p0_HLT_6p0  : ['DoubleEG9_er1p2_dR_Max0p7', 'DoubleEle6_eta1p22_mMax6']
@@ -22,6 +23,20 @@ trigger_map:
   L1_6p0_HLT_4p0  : ['DoubleEG6_er1p2_dR_Max0p8', 'DoubleEle4_eta1p22_mMax6']
   L1_5p5_HLT_10p0  : ['DoubleEG5p5_er1p2_dR_Max0p8', 'DoubleEle10_eta1p22_mMax6']
   L1_5p5_HLT_4p0  : ['DoubleEG5p5_er1p2_dR_Max0p8', 'DoubleEle4_eta1p22_mMax6']
+  
+  # 2022
+  # L1_11p0_HLT_6p5 : ['DoubleEG11_er1p2_dR_Max0p6', 'DoubleEle6p5_eta1p22_mMax6']
+  # L1_10p5_HLT_6p5 : ['DoubleEG10p5_er1p2_dR_Max0p6', 'DoubleEle6p5_eta1p22_mMax6']
+  # L1_9p0_HLT_6p0  : ['DoubleEG9_er1p2_dR_Max0p7', 'DoubleEle6_eta1p22_mMax6']
+  # L1_8p5_HLT_5p5  : ['DoubleEG8p5_er1p2_dR_Max0p7', 'DoubleEle5p5_eta1p22_mMax6']
+  # L1_8p5_HLT_5p0  : ['DoubleEG8p5_er1p2_dR_Max0p7', 'DoubleEle5_eta1p22_mMax6']
+  # L1_8p0_HLT_5p0  : ['DoubleEG8_er1p2_dR_Max0p7', 'DoubleEle5_eta1p22_mMax6']
+  # L1_7p5_HLT_5p0  : ['DoubleEG7p5_er1p2_dR_Max0p7', 'DoubleEle5_eta1p22_mMax6']
+  # L1_7p0_HLT_5p0  : ['DoubleEG7_er1p2_dR_Max0p8', 'DoubleEle5_eta1p22_mMax6']
+  # L1_6p5_HLT_4p5  : ['DoubleEG6p5_er1p2_dR_Max0p8', 'DoubleEle4p5_eta1p22_mMax6']
+  # L1_6p0_HLT_4p0  : ['DoubleEG6_er1p2_dR_Max0p8', 'DoubleEle4_eta1p22_mMax6']
+  # L1_5p5_HLT_6p0  : ['DoubleEG5p5_er1p2_dR_Max0p8', 'DoubleEle10_eta1p22_mMax6']
+  # L1_5p5_HLT_4p0  : ['DoubleEG5p5_er1p2_dR_Max0p8', 'DoubleEle4_eta1p22_mMax6']
   # L1_5p0_HLT_4p0  : ['DoubleEG5_er1p2_dR_Max0p9', 'DoubleEle4_eta1p22_mMax6']
 
 
@@ -38,9 +53,28 @@ mc_samples:
  #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_05_15_26/260515_200723/0000/output_skim_1.root
  #    presel: null
         
- - name: jpsi_resonant
-   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/*.root
+ # - name: jpsi_resonant
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/*.root
+ #   presel: null
+ 
+ - name: jpsi_resonant_official
+   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_official/BuToKJPsi_JPsiToEE_SoftQCD_TuneCP5_13p6TeV_pythia8-evtgen/crab_jpsi_resonant_official_bukjpsi_*/261018_*/0000/*.root
    presel: null
+
+       
+ - name: jpsi_prompt
+   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_prompt/JPsiToEE_pth10toInf_TuneCP5_13p6TeV_pythia8/crab_jpsi_prompt_jpsiee_*/261016_*/0000/*.root
+   presel: null
+   truth_mode: prompt 
+ 
+ # - name: jpsi_resonant_official_22
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_official_22/BuToKJPsi_JPsiToEE_SoftQCD_TuneCP5_13p6TeV_pythia8-evtgen/*/261025_*/0000/*.root
+ #   presel: null
+
+ # - name: jpsi_prompt_22
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_prompt_22/JPsiToEE_pth10toInf_TuneCP5_13p6TeV_pythia8/crab_jpsi_prompt_22_jpsiee_*/261025_*/0000/*.root
+ #   presel: null
+ #   truth_mode: prompt
 
  #  - name: jpsi_resonant_L1_11p0_HLT_6p5
  #    inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private/CRAB_UserFiles/crab_jpsi_resonant_01_21_26/260121_140019/0000/
@@ -101,7 +135,12 @@ data_samples:
  #    presel: null
 
 
- - name: data_trigger_OR
-   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/trigger_OR/*/*/260908_*/*/*.root
-   trigger: trigger_OR
-   presel: null
+ # - name: data_trigger_OR
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/trigger_OR/*/*/260908_*/*/*.root
+ #   trigger: trigger_OR
+ #   presel: null
+ #
+ # - name: data_trigger_OR_22
+ #   inputs: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2022/trigger_OR/CRAB_UserFiles/crab_trigger_OR_ParkingDoubleMuonLowMass*/261025_*/0000/*.root
+ #   trigger: trigger_OR
+ #   presel: null

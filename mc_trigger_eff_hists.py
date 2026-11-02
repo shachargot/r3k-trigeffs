@@ -25,8 +25,12 @@ from producer_base import TriggerEfficiencyProducerBase
 
 N_THREADS = 4
 
+TRUTH_MODES = ('b_plus', 'prompt', 'any_jpsi')
+
 
 def load_weights_json(json_name, table_name='FONLLweightRun3'):
+    if json_name is None:
+        return np.array([1, 100]), np.array([1])
     with open(json_name) as f:
         weight_table = json.load(f)
     return np.array(weight_table[table_name]['edges']), np.array(weight_table[table_name]['weights'])
@@ -88,12 +92,30 @@ def b_plus_of(gen, jpsi_idx):
         return None
     return gen[_top_copy(gen, m, 521)]
 
+def is_b_hadron(pdg):
+    a = abs(int(pdg))
+    return (a // 100) % 10 == 5 or (a // 1000) % 10 == 5
+
+def has_b_ancestor(gen, i, max_depth=30):
+    """True if any ancestor of particle i is a b hadron (non-prompt)."""
+    m = gen[i].genPartIdxMother
+    for _ in range(max_depth):
+        if m < 0:
+            return False
+        if is_b_hadron(gen[m].pdgId):
+            return True
+        m = gen[m].genPartIdxMother
+    return False
+
 
 class MCTriggerEfficiencyProducer(TriggerEfficiencyProducerBase):
     def __init__(self, params):
         super().__init__(params)
         self.theory_bins, self.theory_weights = load_weights_json(self.params.theory_weights_file)
         self.pu_table = load_pu_table(self.params.pu_weights_file, self.params.trigger or 'trigger_OR')
+        self.truth_mode = self.params.truth_mode or 'b_plus'
+        if self.truth_mode not in TRUTH_MODES:
+            raise ValueError(f'truth_mode must be one of {TRUTH_MODES}')
 
     def get_fonll_weight(self, b_pt):
         idx = np.searchsorted(self.theory_bins, b_pt, side='right') - 1
@@ -112,11 +134,19 @@ class MCTriggerEfficiencyProducer(TriggerEfficiencyProducerBase):
         j1 = truth_jpsi(gen, electrons[1])
         if j0 < 0 or j0 != j1:                 # not the two J/psi daughters -> not signal
             return None
-        b = b_plus_of(gen, j0)
-        if b is None:                          # J/psi not from a B+ (fix 15: no .pt on None)
-            return None
-        npv = event.PV_npvs
-        return float(self.get_fonll_weight(b.pt)) * self.get_pu_weight(npv)
+        
+        if self.truth_mode == 'b_plus':
+            b = b_plus_of(gen, j0)
+            if b is None:
+                return None
+            w = float(self.get_fonll_weight(b.pt))
+        elif self.truth_mode == 'prompt':
+            if has_b_ancestor(gen, j0):        # drop non-prompt J/psi
+                return None
+            w = 1.0                            # FONLL B weight does not apply
+        else:                                  # 'any_jpsi': prompt + non-prompt
+            w = 1.0
+        return w * self.get_pu_weight(event.PV_npvs)
 
 
 def worker(params):
@@ -153,7 +183,7 @@ def main(cfg):
             continue
         job.output_dir = out_path
         job.output_file = out_path / f'effs_{job.name}.root'
-        job.theory_weights_file = global_cfg.theory_weights_file
+        job.theory_weights_file = global_cfg.theory_weights_file if global_cfg.theory_weights_file else None
         job.pu_weights_file = global_cfg.pu_weights_file if global_cfg.pu_weights_file else None
         job.trigger_map = cfg.trigger_map
         job.hlt_filter_bits = cfg.hlt_filter_bits if cfg.hlt_filter_bits else {}

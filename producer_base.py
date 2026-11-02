@@ -4,13 +4,15 @@ The data and MC producers differ only in `event_weight()` (data: 1; MC: truth ma
 so everything else lives here and cannot drift between the two.
 """
 import numpy as np
+import math
 import ROOT
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection, Object
 
-from binning import (DIEL_M_BINS, PT_BINS, NPV_BINS, LEADPT_BINS, DR_FINE_BINS)
+from binning import (DIEL_M_BINS, PT_BINS, NPV_BINS, LEADPT_BINS, DR_FINE_BINS, DXY_FINE_BINS, DZ_FINE_BINS, JPSIPT_BINS)
 from trigger_utils import DotDict, build_max_dr, delta_r, match_trigger_objects, both_matched
+from jpsi_vtx import jpsi_dxy_lxy
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
@@ -64,12 +66,26 @@ class TriggerEfficiencyProducerBase(Module):
 
     def beginJob(self, histFile=None, histDirName=None):
         Module.beginJob(self, histFile, histDirName)
-        self.h_npv, self.h_num, self.h_denom, self.h_leadpt_dr = {}, {}, {}, {}
+        self.h_npv, self.h_num, self.h_denom, self.h_leadpt_dr, self.h_m_leadpt, self.h_m_dr, self.h_m_dr_num = {}, {}, {}, {}, {}, {}, {}
+        self.h_m_dxy, self.h_m_dxy_num, self.h_m_dz, self.h_m_dz_num, self.h_m_jpsipt, self.h_m_jpsipt_num = {}, {}, {}, {}, {}, {}
+        self.h_m_jdxy, self.h_m_jdxy_num = {}, {}
         for p in self.paths:
             self.h_npv[p] = self._make(ROOT.TH1F, f'npv_{p}', NPV_BINS)
             self.h_num[p] = self._make(ROOT.TH2F, f'diel_m_{p}_num_ptbinned', DIEL_M_BINS, PT_BINS)
             self.h_denom[p] = self._make(ROOT.TH2F, f'diel_m_{p}_denom_ptbinned', DIEL_M_BINS, PT_BINS)
             self.h_leadpt_dr[p] = self._make(ROOT.TH2F, f'leadpt_dr_{p}_denom', LEADPT_BINS, DR_FINE_BINS)
+            self.h_m_leadpt[p] = self._make(ROOT.TH2F, f'diel_m_{p}_kin_leadpt', DIEL_M_BINS, LEADPT_BINS)
+            self.h_m_dr[p]     = self._make(ROOT.TH2F, f'diel_m_{p}_kin_dr', DIEL_M_BINS, DR_FINE_BINS)
+            self.h_m_dr_num[p] = self._make(ROOT.TH2F, f'diel_m_{p}_kin_dr_num', DIEL_M_BINS, DR_FINE_BINS)
+            self.h_m_dxy[p]     = self._make(ROOT.TH2F, f'diel_m_{p}_kin_dxy',     DIEL_M_BINS, DXY_FINE_BINS)
+            self.h_m_dxy_num[p] = self._make(ROOT.TH2F, f'diel_m_{p}_kin_dxy_num', DIEL_M_BINS, DXY_FINE_BINS)
+            self.h_m_dz[p]      = self._make(ROOT.TH2F, f'diel_m_{p}_kin_dz',      DIEL_M_BINS, DZ_FINE_BINS)
+            self.h_m_dz_num[p]  = self._make(ROOT.TH2F, f'diel_m_{p}_kin_dz_num',  DIEL_M_BINS, DZ_FINE_BINS)
+            self.h_m_jpsipt[p]     = self._make(ROOT.TH2F, f'diel_m_{p}_jpsipt',     DIEL_M_BINS, JPSIPT_BINS)
+            self.h_m_jpsipt_num[p] = self._make(ROOT.TH2F, f'diel_m_{p}_jpsipt_num', DIEL_M_BINS, JPSIPT_BINS)
+            self.h_m_jdxy[p]     = self._make(ROOT.TH2F, f'diel_m_{p}_kin_jpsidxy',     DIEL_M_BINS, DXY_FINE_BINS)
+            self.h_m_jdxy_num[p] = self._make(ROOT.TH2F, f'diel_m_{p}_kin_jpsidxy_num', DIEL_M_BINS, DXY_FINE_BINS)
+
 
     # ------------------------------------------------------------------ trigger decision
     def _path_bits(self, event, e0, e1):
@@ -109,6 +125,11 @@ class TriggerEfficiencyProducerBase(Module):
         sublead_pt = e1.pt
         dr = delta_r(e0.eta, e0.phi, e1.eta, e1.phi)
         diel_m = (e0.p4() + e1.p4()).M()
+        dxy_max = max(abs(e0.dxy), abs(e1.dxy))
+        dz_max  = max(abs(e0.dz),  abs(e1.dz))
+        jpsi_pt = math.hypot(e0.pt*math.cos(e0.phi) + e1.pt*math.cos(e1.phi),
+                     e0.pt*math.sin(e0.phi) + e1.pt*math.sin(e1.phi))
+        v = jpsi_dxy_lxy(e0.pt, e0.phi, e0.dxy, e1.pt, e1.phi, e1.dxy)
 
         bits = self._path_bits(event, e0, e1)
 
@@ -118,6 +139,19 @@ class TriggerEfficiencyProducerBase(Module):
             self.h_denom[p].Fill(float(diel_m), float(sublead_pt), float(w))
             if bits[p]:
                 self.h_num[p].Fill(float(diel_m), float(sublead_pt), float(w))
+                self.h_m_dr_num[p].Fill(float(diel_m), float(dr), float(w))
+                self.h_m_dxy_num[p].Fill(float(diel_m), float(dxy_max), float(w))
+                self.h_m_dz_num[p].Fill(float(diel_m), float(dz_max), float(w))
+                self.h_m_jpsipt_num[p].Fill(float(diel_m), jpsi_pt, float(w))
             self.h_npv[p].Fill(float(pv.npvs), float(w))
             self.h_leadpt_dr[p].Fill(float(e0.pt), float(dr), float(w))
+            self.h_m_leadpt[p].Fill(float(diel_m), float(e0.pt), float(w))
+            self.h_m_dr[p].Fill(float(diel_m), float(dr), float(w))
+            self.h_m_dxy[p].Fill(float(diel_m), float(dxy_max), float(w))
+            self.h_m_dz[p].Fill(float(diel_m), float(dz_max), float(w))
+            self.h_m_jpsipt[p].Fill(float(diel_m), jpsi_pt, float(w))
+            if v is not None:
+                self.h_m_jdxy[p].Fill(float(diel_m), abs(v[0]), float(w))
+                if bits[p]:
+                    self.h_m_jdxy_num[p].Fill(float(diel_m), abs(v[0]), float(w))
         return True

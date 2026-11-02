@@ -223,17 +223,21 @@ class EfficiencyPlot(PlotBase):
         self.format_legend(leg, pos=self.leg_pos, option='upper', scale=self.leg_scale,
                            legtext_size=self.legtext_size)
 
+        parts = (self.title_string or '').split(';')            # ' ;xlabel;Efficiency'
+        x_label = self.x_title or (parts[1].strip() if len(parts) > 1 else '')
+
         # ---- Ratio panel
         gPad.Update()
         p2.cd()
-        rframe = TH1D('frame_ratio', ';;Data / MC', nb, edges)
+        rframe = TH1D('frame_ratio', f';{x_label};Data / MC', nb, edges)
         rframe.SetDirectory(0)
         rframe.SetStats(0)
         rframe.SetMinimum(self.rrange[0])
         rframe.SetMaximum(self.rrange[1])
         rframe.Draw('AXIS')
         self.format_axes(rframe, option='lower', xrange=self.xrange, yrange=self.rrange,
-                         text_size=self.text_size)
+                 text_size=self.text_size)
+        rframe.GetXaxis().SetTitle(x_label)
 
         line = None
         if ratio_line:

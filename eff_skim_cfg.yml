@@ -104,10 +104,23 @@ all_2023_data: &all_2023_data
   - /ParkingDoubleMuonLowMass7/Run2023C-NanoAODv15_v4-v1/NANOAOD
   - /ParkingDoubleMuonLowMass7/Run2023D-NanoAODv15-v1/NANOAOD
   - /ParkingDoubleMuonLowMass7/Run2023D-NanoAODv15_v2-v1/NANOAOD
-  
-Prompt_JpsiEE_MC: &prompt_MC
+
+BuToKJpsiEE_MC: &resonant_MC_23
+  - /BuToKJPsi_JPsiToEE_SoftQCD_TuneCP5_13p6TeV_pythia8-evtgen/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM
+  - /BuToKJPsi_JPsiToEE_SoftQCD_TuneCP5_13p6TeV_pythia8-evtgen/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM
+
+Prompt_JpsiEE_MC: &prompt_MC_23
   - /JPsiToEE_pth10toInf_TuneCP5_13p6TeV_pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v6-v3/NANOAODSIM
   - /JPsiToEE_pth10toInf_TuneCP5_13p6TeV_pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v15-v3/NANOAODSIM
+
+BuToKJpsiEE_MC: &resonant_MC_22
+  - /BuToKJPsi_JPsiToEE_SoftQCD_TuneCP5_13p6TeV_pythia8-evtgen/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v2/NANOAODSIM
+  - /BuToKJPsi_JPsiToEE_SoftQCD_TuneCP5_13p6TeV_pythia8-evtgen/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM
+
+Prompt_JpsiEE_MC: &prompt_MC_22
+  - /JPsiToEE_pth10toInf_TuneCP5_13p6TeV_pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM
+  - /JPsiToEE_pth10toInf_TuneCP5_13p6TeV_pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v3/NANOAODSIM
+
 
 datasets:
   # data_test:
@@ -132,12 +145,32 @@ datasets:
   #   output_path : /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_private
   #   json_path   : null
   #   preselection: *preselection_mc
+  
+  # jpsi_resonant_official:
+  #    files: *resonant_MC
+  #    output_path : /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_official
+  #    json_path   : null
+  #    preselection: *preselection_mc
     
-  jpsi_prompt:
-    files: *prompt_MC
-    output_path: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_prompt
-    json_path: null
-    preselection: *preselection_mc
+  # jpsi_prompt:
+  #   files: *prompt_MC
+  #   output_path: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_prompt
+  #   json_path: null
+  #   preselection: *preselection_mc
+  
+
+  # jpsi_resonant_official_22:
+  #    files: *resonant_MC_22
+  #    output_path : /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_resonant_official_22
+  #    json_path   : null
+  #    preselection: *preselection_mc
+
+  # jpsi_prompt_22:
+  #   files: *prompt_MC_22
+  #   output_path: /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/jpsi_prompt_22
+  #   json_path: null
+  #   preselection: *preselection_mc
+
 
 
   # L1_6p0_HLT_4p0_Excl:
@@ -168,8 +201,6 @@ datasets:
   #   files:        *all_2023_data
   #   preselection: *preselection_data
   #   json_path:    jsons/2023fixed/L1_11p0_HLT_6p5_Excl_Golden_fixed.json
-  #   output_path:  /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/L1_11p0_HLT_6p5_Excl
-
 
 
   # trigger_OR:
@@ -177,3 +208,10 @@ datasets:
   #   preselection: *preselection_data
   #   json_path: jsons/2023fixed/trigger_OR.json
   #   output_path:  /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2023fixed/trigger_OR
+  #
+  trigger_OR:
+    files:        *all_2022_data
+    preselection: *preselection_data
+    json_path: jsons/2022/trigger_OR_fixed.json
+    output_path:  /eos/cms/store/group/phys_bphys/DiElectronX/sgottlie/ParkingDoubleMuonLowMassSkims/2022/trigger_OR
+

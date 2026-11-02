@@ -217,8 +217,13 @@ def main(cfg):
                     dataset_tag = '_'.join(dataset.strip('/').split('/')[:2])
                     if 'jpsi' in params.name:
                         process = dataset_tag.split('_')[0].lower().replace('to', '')
-                        condition = "bpix" if "BPix" in dataset_tag else ""
-                        year = "2023" if "2023" in dataset_tag else ""
+                        if "Bpix" in dataset_tag:
+                            condition = "bpix"
+                        elif "EE" in dataset_tag:
+                            condition = "EE"
+                        else:
+                            condition = ""
+                        year = "2023" if "2023" in dataset_tag else "2022"
                         
                         parts = [process, condition, year]
                         dataset_tag = "_".join(filter(None, parts))
@@ -266,9 +271,6 @@ def main(cfg):
     else:
         raise ValueError(f'Invalid mode "{cfg.run_strategy}". Must be one of ["serial", "mp", "crab"]')
 
-
-    else:
-        raise ValueError(f'Invalid mode "{cfg.run_strategy}". Must be one of ["serial", "mp", "crab"]')
 
     if cfg.verbose:
         finish_time = time.perf_counter()

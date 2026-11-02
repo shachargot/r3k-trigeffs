@@ -1,10 +1,10 @@
 inputs:
-  data_dir: eff_hists/10_14_26/
-  mc_dir: eff_hists/10_14_26/
+  data_dir: eff_hists/10_26_26/
+  mc_dir: eff_hists/10_26_26/
   hist_dir: hists/
 
 output:
-  output_dir: eff_plots/10_14_26/
+  output_dir: eff_plots/10_26_26_bu2022/
 
 plots:
   # L1_11p0_HLT_6p5:
@@ -64,44 +64,80 @@ plots:
   #           weight: 1
 
 
+  # trigger_OR:
+  #  files:
+  #    data: effs_data_trigger_OR.root
+  #    mc: effs_jpsi_prompt.root
+  #    # mc: effs_jpsi_resonant.root
+  #    # mc: effs_jpsi_resonant_official.root
+  #  variables: [pt]
+  #  triggers: 
+  #    data_trigger: trigger_OR
+  #  mc_label: 'Prompt J/#psi #rightarrow ee MC'
+  #  mc_triggers:
+  #      - path: L1_11p0_HLT_6p5 
+  #        weight: 0.1284
+  #      - path: L1_10p5_HLT_6p5
+  #        weight: 0.1594 
+  #      - path: L1_9p0_HLT_6p0 
+  #        weight: 0.0503 
+  #      - path: L1_8p5_HLT_5p5 
+  #        weight: 0.0479 
+  #      - path: L1_8p0_HLT_10p0 
+  #        weight: 0.0195
+  #      - path: L1_8p0_HLT_5p0  
+  #        weight: 0.0773 
+  #      - path: L1_7p5_HLT_5p0 
+  #        weight: 0.0667 
+  #      - path: L1_7p0_HLT_10p0
+  #        weight: 0.0417
+  #      - path: L1_7p0_HLT_5p0 
+  #        weight: 0.1099 
+  #      - path: L1_6p5_HLT_10p0 
+  #        weight: 0.0335
+  #      - path: L1_6p5_HLT_4p5 
+  #        weight: 0.1149 
+  #      - path: L1_6p0_HLT_10p0  
+  #        weight: 0.0172
+  #      - path: L1_6p0_HLT_4p0  
+  #        weight: 0.0598
+  #      - path: L1_5p5_HLT_10p0  
+  #        weight: 0.0292
+  #      - path: L1_5p5_HLT_4p0  
+  #        weight: 0.0442
 
-  trigger_OR:
+  trigger_OR_22:
    files:
-     data: effs_data_trigger_OR.root
-     mc: effs_jpsi_resonant.root
+     data: effs_data_trigger_OR_22.root
+     # mc: effs_jpsi_prompt_22.root
+     mc: effs_jpsi_resonant_official_22.root
    variables: [pt]
    triggers: 
      data_trigger: trigger_OR
+   # mc_label: 'Prompt J/#psi #rightarrow ee MC'
+   mc_label: 'B^{+} #rightarrow J/#psi K^{+} MC'
    mc_triggers:
        - path: L1_11p0_HLT_6p5 
-         weight: 0.1284
+         weight: 0.05
        - path: L1_10p5_HLT_6p5
-         weight: 0.1594 
+         weight: 0.07 
        - path: L1_9p0_HLT_6p0 
-         weight: 0.0503 
+         weight: 0.31 
        - path: L1_8p5_HLT_5p5 
-         weight: 0.0479 
-       - path: L1_8p0_HLT_10p0 
-         weight: 0.0195
+         weight: 0.05 
+       - path: L1_8p5_HLT_5p0 
+         weight: 0.02  
        - path: L1_8p0_HLT_5p0  
-         weight: 0.0773 
+         weight: 0.18 
        - path: L1_7p5_HLT_5p0 
-         weight: 0.0667 
-       - path: L1_7p0_HLT_10p0
-         weight: 0.0417
+         weight: 0.04
        - path: L1_7p0_HLT_5p0 
-         weight: 0.1099 
-       - path: L1_6p5_HLT_10p0 
-         weight: 0.0335
+         weight: 0.08
        - path: L1_6p5_HLT_4p5 
-         weight: 0.1149 
-       - path: L1_6p0_HLT_10p0  
-         weight: 0.0172
+         weight: 0.1 
        - path: L1_6p0_HLT_4p0  
-         weight: 0.0598
-       - path: L1_5p5_HLT_10p0  
-         weight: 0.0292
+         weight: 0.07
        - path: L1_5p5_HLT_4p0  
-         weight: 0.0442
+         weight: 0.02
 
 
